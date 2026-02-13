@@ -10,3 +10,5 @@ python-dotenv
 pydantic
 pypdf
 python-multipart
+google-api-core
+google-generativeai
