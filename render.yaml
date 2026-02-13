@@ -1,0 +1,30 @@
+services:
+  # Backend Service
+  - type: web
+    name: quiz-generator-backend
+    env: python
+    region: singapore # or your preferred region
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    root: backend
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false # User must enter this manually in dashboard
+
+  # Frontend Service (Static Site)
+  - type: static
+    name: quiz-generator-frontend
+    env: static
+    root: frontend
+    buildCommand: npm install && npm run build
+    publish: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: quiz-generator-backend
+          property: url
